@@ -249,10 +249,18 @@ function getTimeHTML(distance) {
 }
                     </script>
                     <div id=sss>
-                        <input type="button" id="Mbutton" onclick="M_drawidsB();" value="교통 정보 확인" />
+                        <input type="button" id="Mbutton" style="position: absolute; float: right " onclick="M_drawidsB();" value="교통 정보 확인" />
                         <script>
                             function M_drawidsB() {
                             map.addOverlayMapTypeId(daum.maps.MapTypeId.TRAFFIC);     
+                                                    }
+                        </script>
+                    </div>
+                    <div id=sss2>
+                        <input type="button" id="Mbutton2" style="position: absolute; float: right " onclick="M_drawidsC();" value="교통 정보 비활성화" />
+                        <script>
+                            function M_drawidsC() {
+                            map.removeOverlayMapTypeId(daum.maps.MapTypeId.TRAFFIC);    
                                                     }
                         </script>
                     </div>
