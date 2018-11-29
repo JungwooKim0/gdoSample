@@ -44,15 +44,13 @@
 var map = new daum.maps.Map(mapContainer, mapOption); 
 
 var drawingFlag = false; 
+var M_Traffic = false;
 var moveLine; 
 var clickLine 
 var distanceOverlay; 
 var dots = {};
-var M_DrawDis = false;
 
-if ( M_DrawDis == true){
-
-daum.maps.event.addListener(map, 'click', function(mouseEvent) {
+    daum.maps.event.addListener(map, 'click', function(mouseEvent) {
  
  var clickPosition = mouseEvent.latLng;
 
@@ -97,7 +95,7 @@ daum.maps.event.addListener(map, 'click', function(mouseEvent) {
  }
 });
 
-}
+
 
 daum.maps.event.addListener(map, 'mousemove', function (mouseEvent) {
 
@@ -117,6 +115,7 @@ daum.maps.event.addListener(map, 'mousemove', function (mouseEvent) {
         showDistance(content, mousePosition);   
     }             
 });                 
+
 
 
 daum.maps.event.addListener(map, 'rightclick', function (mouseEvent) {
@@ -250,10 +249,10 @@ function getTimeHTML(distance) {
 }
                     </script>
                     <div id=sss>
-                        <input type="button" id="Mbutton" onclick="M_drawidsB();" value="길이 체크 버튼" />
+                        <input type="button" id="Mbutton" onclick="M_drawidsB();" value="교통 정보 확인" />
                         <script>
                             function M_drawidsB() {
-	                            M_DrawDis = true;
+                            map.addOverlayMapTypeId(daum.maps.MapTypeId.TRAFFIC);     
                                                     }
                         </script>
                     </div>
