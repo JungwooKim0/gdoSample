@@ -50,9 +50,8 @@ var distanceOverlay;
 var dots = {};
 var M_DrawDis = false;
 
-if ( M_DrawDis == true) {
-
-daum.maps.event.addListener(map, 'click', function(mouseEvent) {
+if ( M_DrawDis == true){
+    daum.maps.event.addListener(map, 'click', function(mouseEvent) {
  
  var clickPosition = mouseEvent.latLng;
 
@@ -97,61 +96,60 @@ daum.maps.event.addListener(map, 'click', function(mouseEvent) {
  }
 });
 
+}
+
+
 daum.maps.event.addListener(map, 'mousemove', function (mouseEvent) {
 
- if (drawingFlag){
+    if (drawingFlag){
 
-     var mousePosition = mouseEvent.latLng; 
+        var mousePosition = mouseEvent.latLng; 
 
-     var path = clickLine.getPath();
+        var path = clickLine.getPath();
 
-     var movepath = [path[path.length-1], mousePosition];
-     moveLine.setPath(movepath);    
-     moveLine.setMap(map);
-     
-     var distance = Math.round(clickLine.getLength() + moveLine.getLength()),
-         content = '<div class="dotOverlay distanceInfo">총거리 <span class="number">' + distance + '</span>m</div>'; 
+        var movepath = [path[path.length-1], mousePosition];
+        moveLine.setPath(movepath);    
+        moveLine.setMap(map);
+        
+        var distance = Math.round(clickLine.getLength() + moveLine.getLength()),
+            content = '<div class="dotOverlay distanceInfo">총거리 <span class="number">' + distance + '</span>m</div>'; 
 
-     showDistance(content, mousePosition);   
- }             
+        showDistance(content, mousePosition);   
+    }             
 });                 
 
 daum.maps.event.addListener(map, 'rightclick', function (mouseEvent) {
 
- if (drawingFlag) {
+    if (drawingFlag) {
 
-     moveLine.setMap(null);
-     moveLine = null;  
+        moveLine.setMap(null);
+        moveLine = null;  
 
-     var path = clickLine.getPath();
+        var path = clickLine.getPath();
 
-     if (path.length > 1) {
+        if (path.length > 1) {
 
-         if (dots[dots.length-1].distance) {
-             dots[dots.length-1].distance.setMap(null);
-             dots[dots.length-1].distance = null;    
-         }
+            if (dots[dots.length-1].distance) {
+                dots[dots.length-1].distance.setMap(null);
+                dots[dots.length-1].distance = null;    
+            }
 
-         var distance = Math.round(clickLine.getLength()),
-             content = getTimeHTML(distance);
+            var distance = Math.round(clickLine.getLength()),
+                content = getTimeHTML(distance);
 
-         showDistance(content, path[path.length-1]);  
-          
-     } else {
+            showDistance(content, path[path.length-1]);  
+             
+        } else {
 
-         deleteClickLine();
-         deleteCircleDot(); 
-         deleteDistnce();
+            deleteClickLine();
+            deleteCircleDot(); 
+            deleteDistnce();
 
-     }
-     
-     drawingFlag = false;          
- }  
+        }
+        
+        drawingFlag = false;          
+    }  
 });    
-
-}
-
-
 
 function deleteClickLine() {
     if (clickLine) {
@@ -251,7 +249,7 @@ function getTimeHTML(distance) {
 }
                     </script>
                     <div id=sss>
-                        <input type="button" class="Mbutton" style="position : absoulte; right : 0; " onclick="M_drawidsB();" value="길이 체크 버튼" />
+                        <input type="button" id="Mbutton" onclick="M_drawidsB();" value="길이 체크 버튼" />
                         <script>
                             function M_drawidsB() {
 	                            M_DrawDis = true;
@@ -296,7 +294,7 @@ function getTimeHTML(distance) {
 			<script src="assets/js/browser.min.js"></script>
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
-            <script src="assets/js/main.js"></script>       
+			<script src="assets/js/main.js"></script>
 
 	</body>
 </html>
