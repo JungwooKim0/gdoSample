@@ -50,102 +50,108 @@ var distanceOverlay;
 var dots = {};
 var M_DrawDis = false;
 
+if ( M_DrawDis == true) {
+
 daum.maps.event.addListener(map, 'click', function(mouseEvent) {
  
-    var clickPosition = mouseEvent.latLng;
+ var clickPosition = mouseEvent.latLng;
 
-    if (!drawingFlag && M_DrawDis==true) {
+ if (!drawingFlag) {
 
-        drawingFlag = true;
+     drawingFlag = true;
 
-        deleteClickLine();
+     deleteClickLine();
 
-        deleteDistnce();
+     deleteDistnce();
 
-        deleteCircleDot();
+     deleteCircleDot();
 
-        clickLine = new daum.maps.Polyline({
-            map: map,
-            path: [clickPosition],
-            strokeWeight: 3,
-            strokeColor: '#db4040',
-            strokeOpacity: 1,
-            strokeStyle: 'solid'
-        });
+     clickLine = new daum.maps.Polyline({
+         map: map,
+         path: [clickPosition],
+         strokeWeight: 3,
+         strokeColor: '#db4040',
+         strokeOpacity: 1,
+         strokeStyle: 'solid'
+     });
 
-        moveLine = new daum.maps.Polyline({
-            strokeWeight: 3,
-            strokeColor: '#db4040',
-            strokeOpacity: 0.7,
-            strokeStyle: 'solid'
-        });
+     moveLine = new daum.maps.Polyline({
+         strokeWeight: 3,
+         strokeColor: '#db4040',
+         strokeOpacity: 0.7,
+         strokeStyle: 'solid'
+     });
 
-        displayCircleDot(clickPosition, 0);
+     displayCircleDot(clickPosition, 0);
 
-            
-    } else {
-        var path = clickLine.getPath();
+         
+ } else {
+     var path = clickLine.getPath();
 
-        path.push(clickPosition);
+     path.push(clickPosition);
 
-        clickLine.setPath(path);
+     clickLine.setPath(path);
 
-        var distance = Math.round(clickLine.getLength());
-        displayCircleDot(clickPosition, distance);
-    }
+     var distance = Math.round(clickLine.getLength());
+     displayCircleDot(clickPosition, distance);
+ }
 });
 
 daum.maps.event.addListener(map, 'mousemove', function (mouseEvent) {
 
-    if (drawingFlag){
+ if (drawingFlag){
 
-        var mousePosition = mouseEvent.latLng; 
+     var mousePosition = mouseEvent.latLng; 
 
-        var path = clickLine.getPath();
+     var path = clickLine.getPath();
 
-        var movepath = [path[path.length-1], mousePosition];
-        moveLine.setPath(movepath);    
-        moveLine.setMap(map);
-        
-        var distance = Math.round(clickLine.getLength() + moveLine.getLength()),
-            content = '<div class="dotOverlay distanceInfo">총거리 <span class="number">' + distance + '</span>m</div>'; 
+     var movepath = [path[path.length-1], mousePosition];
+     moveLine.setPath(movepath);    
+     moveLine.setMap(map);
+     
+     var distance = Math.round(clickLine.getLength() + moveLine.getLength()),
+         content = '<div class="dotOverlay distanceInfo">총거리 <span class="number">' + distance + '</span>m</div>'; 
 
-        showDistance(content, mousePosition);   
-    }             
+     showDistance(content, mousePosition);   
+ }             
 });                 
 
 daum.maps.event.addListener(map, 'rightclick', function (mouseEvent) {
 
-    if (drawingFlag) {
+ if (drawingFlag) {
 
-        moveLine.setMap(null);
-        moveLine = null;  
+     moveLine.setMap(null);
+     moveLine = null;  
 
-        var path = clickLine.getPath();
+     var path = clickLine.getPath();
 
-        if (path.length > 1) {
+     if (path.length > 1) {
 
-            if (dots[dots.length-1].distance) {
-                dots[dots.length-1].distance.setMap(null);
-                dots[dots.length-1].distance = null;    
-            }
+         if (dots[dots.length-1].distance) {
+             dots[dots.length-1].distance.setMap(null);
+             dots[dots.length-1].distance = null;    
+         }
 
-            var distance = Math.round(clickLine.getLength()),
-                content = getTimeHTML(distance);
+         var distance = Math.round(clickLine.getLength()),
+             content = getTimeHTML(distance);
 
-            showDistance(content, path[path.length-1]);  
-             
-        } else {
+         showDistance(content, path[path.length-1]);  
+          
+     } else {
 
-            deleteClickLine();
-            deleteCircleDot(); 
-            deleteDistnce();
+         deleteClickLine();
+         deleteCircleDot(); 
+         deleteDistnce();
 
-        }
-        
-        drawingFlag = false;          
-    }  
+     }
+     
+     drawingFlag = false;          
+ }  
 });    
+
+}
+
+
 
 function deleteClickLine() {
     if (clickLine) {
