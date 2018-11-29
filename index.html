@@ -52,204 +52,203 @@ var M_DrawDis = false;
 
 daum.maps.event.addListener(map, 'click', function(mouseEvent) {
  
-    if (M_DrawDis == true){
-        var clickPosition = mouseEvent.latLng;
+    var clickPosition = mouseEvent.latLng;
 
-if (!drawingFlag) {
+    if (!drawingFlag && M_DrawDis==true) {
 
-    drawingFlag = true;
+        drawingFlag = true;
 
-    deleteClickLine();
+        deleteClickLine();
 
-    deleteDistnce();
+        deleteDistnce();
 
-    deleteCircleDot();
+        deleteCircleDot();
 
-    clickLine = new daum.maps.Polyline({
-        map: map,
-        path: [clickPosition],
-        strokeWeight: 3,
-        strokeColor: '#db4040',
-        strokeOpacity: 1,
-        strokeStyle: 'solid'
-    });
+        clickLine = new daum.maps.Polyline({
+            map: map,
+            path: [clickPosition],
+            strokeWeight: 3,
+            strokeColor: '#db4040',
+            strokeOpacity: 1,
+            strokeStyle: 'solid'
+        });
 
-    moveLine = new daum.maps.Polyline({
-        strokeWeight: 3,
-        strokeColor: '#db4040',
-        strokeOpacity: 0.7,
-        strokeStyle: 'solid'
-    });
+        moveLine = new daum.maps.Polyline({
+            strokeWeight: 3,
+            strokeColor: '#db4040',
+            strokeOpacity: 0.7,
+            strokeStyle: 'solid'
+        });
 
-    displayCircleDot(clickPosition, 0);
+        displayCircleDot(clickPosition, 0);
 
-        
-} else {
-    var path = clickLine.getPath();
+            
+    } else {
+        var path = clickLine.getPath();
 
-    path.push(clickPosition);
+        path.push(clickPosition);
 
-    clickLine.setPath(path);
+        clickLine.setPath(path);
 
-    var distance = Math.round(clickLine.getLength());
-    displayCircleDot(clickPosition, distance);
-}
-};
+        var distance = Math.round(clickLine.getLength());
+        displayCircleDot(clickPosition, distance);
+    }
+});
 
 daum.maps.event.addListener(map, 'mousemove', function (mouseEvent) {
 
-if (drawingFlag){
+    if (drawingFlag){
 
-    var mousePosition = mouseEvent.latLng; 
+        var mousePosition = mouseEvent.latLng; 
 
-    var path = clickLine.getPath();
+        var path = clickLine.getPath();
 
-    var movepath = [path[path.length-1], mousePosition];
-    moveLine.setPath(movepath);    
-    moveLine.setMap(map);
-    
-    var distance = Math.round(clickLine.getLength() + moveLine.getLength()),
-        content = '<div class="dotOverlay distanceInfo">총거리 <span class="number">' + distance + '</span>m</div>'; 
+        var movepath = [path[path.length-1], mousePosition];
+        moveLine.setPath(movepath);    
+        moveLine.setMap(map);
+        
+        var distance = Math.round(clickLine.getLength() + moveLine.getLength()),
+            content = '<div class="dotOverlay distanceInfo">총거리 <span class="number">' + distance + '</span>m</div>'; 
 
-    showDistance(content, mousePosition);   
-}             
+        showDistance(content, mousePosition);   
+    }             
 });                 
 
 daum.maps.event.addListener(map, 'rightclick', function (mouseEvent) {
 
-if (drawingFlag) {
+    if (drawingFlag) {
 
-    moveLine.setMap(null);
-    moveLine = null;  
+        moveLine.setMap(null);
+        moveLine = null;  
 
-    var path = clickLine.getPath();
+        var path = clickLine.getPath();
 
-    if (path.length > 1) {
+        if (path.length > 1) {
 
-        if (dots[dots.length-1].distance) {
-            dots[dots.length-1].distance.setMap(null);
-            dots[dots.length-1].distance = null;    
+            if (dots[dots.length-1].distance) {
+                dots[dots.length-1].distance.setMap(null);
+                dots[dots.length-1].distance = null;    
+            }
+
+            var distance = Math.round(clickLine.getLength()),
+                content = getTimeHTML(distance);
+
+            showDistance(content, path[path.length-1]);  
+             
+        } else {
+
+            deleteClickLine();
+            deleteCircleDot(); 
+            deleteDistnce();
+
         }
-
-        var distance = Math.round(clickLine.getLength()),
-            content = getTimeHTML(distance);
-
-        showDistance(content, path[path.length-1]);  
-         
-    } else {
-
-        deleteClickLine();
-        deleteCircleDot(); 
-        deleteDistnce();
-
-    }
-    
-    drawingFlag = false;          
-}  
+        
+        drawingFlag = false;          
+    }  
 });    
 
 function deleteClickLine() {
-if (clickLine) {
-    clickLine.setMap(null);    
-    clickLine = null;        
-}
+    if (clickLine) {
+        clickLine.setMap(null);    
+        clickLine = null;        
+    }
 }
 
 function showDistance(content, position) {
-
-if (distanceOverlay) { 
     
- 
-    distanceOverlay.setPosition(position);
-    distanceOverlay.setContent(content);
-    
-} else { 
+    if (distanceOverlay) { 
+        
+     
+        distanceOverlay.setPosition(position);
+        distanceOverlay.setContent(content);
+        
+    } else { 
 
-    distanceOverlay = new daum.maps.CustomOverlay({
-        map: map,
-        content: content,
-        position: position,
-        xAnchor: 0,
-        yAnchor: 0,
-        zIndex: 3  
-    });      
-}
+        distanceOverlay = new daum.maps.CustomOverlay({
+            map: map,
+            content: content,
+            position: position,
+            xAnchor: 0,
+            yAnchor: 0,
+            zIndex: 3  
+        });      
+    }
 }
 
 function deleteDistnce () {
-if (distanceOverlay) {
-    distanceOverlay.setMap(null);
-    distanceOverlay = null;
-}
+    if (distanceOverlay) {
+        distanceOverlay.setMap(null);
+        distanceOverlay = null;
+    }
 }
 
 function displayCircleDot(position, distance) {
 
-var circleOverlay = new daum.maps.CustomOverlay({
-    content: '<span class="dot"></span>',
-    position: position,
-    zIndex: 1
-});
-
-circleOverlay.setMap(map);
-
-if (distance > 0) {
-    var distanceOverlay = new daum.maps.CustomOverlay({
-        content: '<div class="dotOverlay">거리 <span class="number">' + distance + '</span>m</div>',
+    var circleOverlay = new daum.maps.CustomOverlay({
+        content: '<span class="dot"></span>',
         position: position,
-        yAnchor: 1,
-        zIndex: 2
+        zIndex: 1
     });
 
-    distanceOverlay.setMap(map);
-}
+    circleOverlay.setMap(map);
 
-dots.push({circle:circleOverlay, distance: distanceOverlay});
+    if (distance > 0) {
+        var distanceOverlay = new daum.maps.CustomOverlay({
+            content: '<div class="dotOverlay">거리 <span class="number">' + distance + '</span>m</div>',
+            position: position,
+            yAnchor: 1,
+            zIndex: 2
+        });
+
+        distanceOverlay.setMap(map);
+    }
+
+    dots.push({circle:circleOverlay, distance: distanceOverlay});
 }
 
 function deleteCircleDot() {
-var i;
+    var i;
 
-for ( i = 0; i < dots.length; i++ ){
-    if (dots[i].circle) { 
-        dots[i].circle.setMap(null);
+    for ( i = 0; i < dots.length; i++ ){
+        if (dots[i].circle) { 
+            dots[i].circle.setMap(null);
+        }
+
+        if (dots[i].distance) {
+            dots[i].distance.setMap(null);
+        }
     }
 
-    if (dots[i].distance) {
-        dots[i].distance.setMap(null);
-    }
-}
-
-dots = [];
+    dots = [];
 }
 
 function getTimeHTML(distance) {
 
-var walkkTime = distance / 67 | 0;
-var walkHour = '', walkMin = '';
+    var walkkTime = distance / 67 | 0;
+    var walkHour = '', walkMin = '';
 
-if (walkkTime > 60) {
-    walkHour = '<span class="number">' + Math.floor(walkkTime / 60) + '</span>시간 '
-}
-walkMin = '<span class="number">' + walkkTime % 60 + '</span>분'
-
-var content = '<ul class="dotOverlay distanceInfo">';
-content += '    <li>';
-content += '        <span class="label">거리</span><span class="number">' + distance + '</span>m';
-content += '    </li>';
-content += '    <li>';
-content += '        <span class="label">걸어서</span>' + walkHour + walkMin;
-content += '    </li>';
-content += '</ul>'
-
-return content;
-        
+    if (walkkTime > 60) {
+        walkHour = '<span class="number">' + Math.floor(walkkTime / 60) + '</span>시간 '
     }
+    walkMin = '<span class="number">' + walkkTime % 60 + '</span>분'
+
+    var content = '<ul class="dotOverlay distanceInfo">';
+    content += '    <li>';
+    content += '        <span class="label">거리</span><span class="number">' + distance + '</span>m';
+    content += '    </li>';
+    content += '    <li>';
+    content += '        <span class="label">걸어서</span>' + walkHour + walkMin;
+    content += '    </li>';
+    content += '</ul>'
+
+    return content;
+}
 					</script>
-                    <div class="container show-grid" style="width: 700px;">
-                    <a class="btn btn-default" href="#" role="button">Link</a>
                     </div>
-                    </div>
+                    <button onclick="goBack()">거리 확인하기</button>
+                    <script>
+                        M_DrawDis = true;
+                    </script>
                     Tip : 서울 디지텍 고등학교에서 녹사평역 2번출구까지의 단순 직선 거리는 약 500m 입니다.
 				</div>
 			</section>
